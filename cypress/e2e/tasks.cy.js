@@ -33,4 +33,37 @@ describe("tasks management", () => {
     cy.get(".modal").contains("Add Task").click();
     cy.get(".error-message").should("be.visible");
   });
+
+  it("should filter tasks", () => {
+    cy.visit("http://localhost:5173/");
+    cy.contains("Add Task").click();
+    cy.get("#title").type("A Cypress Task");
+    cy.get("#summary").type("A Summary for this Cypress Task");
+    cy.get("#category").select("urgent");
+    cy.get(".modal").contains("Add Task").click();
+    cy.get(".task").should("have.length", 1);
+    cy.get("#filter").select("moderate");
+    cy.get(".task").should("have.length", 0);
+    cy.get("#filter").select("urgent");
+    cy.get(".task").should("have.length", 1);
+    cy.get("#filter").select("all");
+    cy.get(".task").should("have.length", 1);
+  });
+
+  it("should add multiples tasks", () => {
+    cy.visit("http://localhost:5173/");
+    cy.contains("Add Task").click();
+    cy.get("#title").type("Task 1");
+    cy.get("#summary").type("First Task");
+    cy.get(".modal").contains("Add Task").click();
+    cy.get(".task").should("have.length", 1);
+
+    cy.contains("Add Task").click();
+    cy.get("#title").type("Task 2");
+    cy.get("#summary").type("Second Task");
+    cy.get(".modal").contains("Add Task").click();
+    cy.get(".task").should("have.length", 2);
+    cy.get(".task").eq(0).contains("First Task");
+    cy.get(".task").eq(1).contains("Second Task");
+  });
 });
